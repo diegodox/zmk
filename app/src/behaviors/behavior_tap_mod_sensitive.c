@@ -9,6 +9,11 @@
 
 #define TAP_TERM_MS 200
 
+// Mask to detect shift pressed
+#define MOD_LSHIFT 0x02
+#define MOD_RSHIFT 0x20
+#define MOD_MASK_SHIFT (MOD_LSHIFT | MOD_RSHIFT)
+
 struct behavior_config {
     struct zmk_behavior_binding tap_normal;
     struct zmk_behavior_binding tap_shifted;
@@ -43,11 +48,8 @@ static int behavior_release(struct zmk_behavior_binding *binding,
 
     if (elapsed < TAP_TERM_MS) {
         uint8_t mods = zmk_hid_get_explicit_mods();
-
         const struct zmk_behavior_binding *tap_binding =
-            (mods & (MOD_LSFT_MASK | MOD_RSFT_MASK))
-                ? &config->tap_shifted
-                : &config->tap_normal;
+            (mods & MOD_MASK_SHIFT) ? &config->tap_shifted : &config->tap_normal;
 
         zmk_behavior_queue_add_event(tap_binding, true, event.timestamp);
         zmk_behavior_queue_add_event(tap_binding, false, event.timestamp);
@@ -63,6 +65,5 @@ static const struct behavior_driver_api behavior_driver_api = {
     .binding_pressed = behavior_press,
     .binding_released = behavior_release,
 };
-
 
 BEHAVIOR_DEFINE(tap_mod_sensitive, behavior_driver_api);
