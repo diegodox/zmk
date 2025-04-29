@@ -64,4 +64,5 @@ static const struct behavior_driver_api behavior_driver_api = {
     .binding_released = behavior_release,
 };
 
+
 BEHAVIOR_DEFINE(tap_mod_sensitive, behavior_driver_api);
