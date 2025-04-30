@@ -134,3 +134,12 @@ config ZMK_BEHAVIOR_MACRO
     bool
     default y
     depends on DT_HAS_ZMK_BEHAVIOR_MACRO_ENABLED || DT_HAS_ZMK_BEHAVIOR_MACRO_ONE_PARAM_ENABLED || DT_HAS_ZMK_BEHAVIOR_MACRO_TWO_PARAM_ENABLED
+
+config ZMK_BEHAVIOR_TAP_MOD_SENSITIVE
+    bool "Tap Mod Sensitive Behavior"
+    default y
+    depends on DT_HAS_ZMK_BEHAVIOR_TAP_MOD_SENSITIVE_ENABLED
+    help
+      Enables the Tap Mod Sensitive behavior, which allows a key to perform
+      different actions based on the duration of the press and the state of
+      modifier keys (e.g., shift).
