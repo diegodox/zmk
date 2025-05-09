@@ -84,23 +84,22 @@ static const struct behavior_driver_api tap_mod_sensitive_driver_api = {
     .binding_released = on_binding_released,
 };
 
-#define TRANSFORM_ENTRY(idx, node) \ 
-    { \ 
-        .behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(node, bindings, idx)), \
-        .param1 = DT_INST_PHA_OR(node, bindings, idx, param1, 0), \
-        .param2 = DT_INST_PHA_OR(node, bindings, idx, param2, 0), \
+#define TRANSFORM_ENTRY(idx, node)                                                                 \
+    {                                                                                              \
+        .behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(node, bindings, idx)),               \
+        .param1 = DT_INST_PHA_OR(node, bindings, idx, param1, 0),                                  \
+        .param2 = DT_INST_PHA_OR(node, bindings, idx, param2, 0),                                  \
     }
 
-#define TAP_MOD_SENSITIVE_INST(n) \ 
-    static struct behavior_tap_mod_sensitive_config config_##n = { \ 
-        .tap_binding = TRANSFORM_ENTRY(0, n), \ 
-        .shifted_tap_binding = TRANSFORM_ENTRY(1, n), \ 
-        .hold_binding = TRANSFORM_ENTRY(2, n), \ 
-    }; \ 
-    static struct behavior_tap_mod_sensitive_data data_##n = {}; \ 
-    BEHAVIOR_DT_INST_DEFINE(n, NULL, NULL, &data_##n, &config_##n, \
-                            POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, \
-                            &tap_mod_sensitive_driver_api);
+#define TAP_MOD_SENSITIVE_INST(n)                                                                  \
+    static struct behavior_tap_mod_sensitive_config config_##n = {                                 \
+        .tap_binding = TRANSFORM_ENTRY(0, n),                                                      \
+        .shifted_tap_binding = TRANSFORM_ENTRY(1, n),                                              \
+        .hold_binding = TRANSFORM_ENTRY(2, n),                                                     \
+    };                                                                                             \
+    static struct behavior_tap_mod_sensitive_data data_##n = {};                                   \
+    BEHAVIOR_DT_INST_DEFINE(n, NULL, NULL, &data_##n, &config_##n, POST_KERNEL,                    \
+                            CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &tap_mod_sensitive_driver_api);
 
 DT_INST_FOREACH_STATUS_OKAY(TAP_MOD_SENSITIVE_INST)
 
