@@ -1,0 +1,24 @@
+/ {
+    behaviors {
+        tap_mod_sensitive: tap_mod_sensitive {
+            compatible = "zmk,behavior-tap-mod-sensitive";
+            // tap shift hold
+            bindings = <
+                &kp A
+                &kp B
+                &kp C
+            >;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        default_layer {
+            bindings = <
+                &kp LEFT_ALT &tap_mod_sensitive
+                &kp LEFT_SHIFT &kp RIGHT_SHIFT
+            >;
+        };
+    };
+};
