@@ -17,9 +17,9 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
 
 struct behavior_hold_tap_mod_config {
-    char *tap_behavior_dev;
-    char *hold_behavior_dev;
-    char *mod_behavior_dev;
+    const struct device *tap_behavior_dev;
+    const struct device *hold_behavior_dev;
+    const struct device *mod_behavior_dev;
     uint32_t mods;
     int tapping_term_ms;
 };
@@ -41,7 +41,7 @@ struct active_hold_tap_mod {
 
 static struct active_hold_tap_mod active_mod_tap;
 
-static int press_binding(const char *behavior_dev, uint32_t param,
+static int press_binding(const struct device *behavior_dev, uint32_t param,
                          struct zmk_behavior_binding_event event) {
     struct zmk_behavior_binding binding = {
         .behavior_dev = behavior_dev,
@@ -50,7 +50,7 @@ static int press_binding(const char *behavior_dev, uint32_t param,
     return zmk_behavior_invoke_binding(&binding, event, true);
 }
 
-static int release_binding(const char *behavior_dev, uint32_t param,
+static int release_binding(const struct device *behavior_dev, uint32_t param,
                            struct zmk_behavior_binding_event event) {
     struct zmk_behavior_binding binding = {
         .behavior_dev = behavior_dev,
@@ -127,11 +127,11 @@ static int behavior_hold_tap_mod_init(const struct device *dev) {
     return 0;
 }
 
-#define KP_INST(n)                                                                                 \
+#define HTM_INST(n)                                                                                \
     static const struct behavior_hold_tap_mod_config behavior_hold_tap_mod_config_##n = {          \
-        .tap_behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(n, bindings, 0)),                \
-        .hold_behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(n, bindings, 1)),               \
-        .mod_behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(n, bindings, 2)),                \
+        .tap_behavior_dev = DEVICE_DT_GET(DT_INST_PHANDLE_BY_IDX(n, bindings, 0)),                 \
+        .hold_behavior_dev = DEVICE_DT_GET(DT_INST_PHANDLE_BY_IDX(n, bindings, 1)),                \
+        .mod_behavior_dev = DEVICE_DT_GET(DT_INST_PHANDLE_BY_IDX(n, bindings, 2)),                 \
         .mods = DT_INST_PROP(n, mods),                                                             \
         .tapping_term_ms = DT_INST_PROP(n, tapping_term_ms),                                       \
     };                                                                                             \
@@ -141,6 +141,6 @@ static int behavior_hold_tap_mod_init(const struct device *dev) {
                             CONFIG_KERNEL_INIT_PRIORITY_DEFAULT,                                   \
                             &behavior_hold_tap_mod_driver_api);
 
-DT_INST_FOREACH_STATUS_OKAY(KP_INST)
+DT_INST_FOREACH_STATUS_OKAY(HTM_INST)
 
 #endif
