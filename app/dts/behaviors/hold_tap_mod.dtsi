@@ -5,24 +5,23 @@
  * Generic &htm behavior:
  * - param1 = keycode for tap behavior
  * - param2 = keycode for hold behavior
- *
- * If mods are active (e.g. LSHIFT), use the third fixed mod behavior.
+ * - param3 = keycode for mod-triggered behavior
+ * - param4 = bitmask of modifiers that activate mod behavior
  */
 
 #include <dt-bindings/zmk/keys.h>
 
 / {
     behaviors {
-#if ZMK_BEHAVIOR_OMIT(MT)
+#if ZMK_BEHAVIOR_OMIT(HTM)
         /omit-if-no-ref/
 #endif
         htm: htm {
             compatible = "zmk,behavior-hold-tap-mod";
-            #binding-cells = <3>;
-            bindings = <&kp A &kp B &kp GRAVE>; // param1 = tap, param2 = hold
-            mods = <MOD_LSFT>;
+            #binding-cells = <4>;
+            bindings = <&kp 0 &kp 0 &kp 0>; // dummy、param1〜3に上書きされる
+            mods = <0>;  // param4 で上書き
             tapping-term-ms = <200>;
         };
     };
 };
-  
