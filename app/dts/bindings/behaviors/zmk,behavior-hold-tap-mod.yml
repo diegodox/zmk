@@ -17,7 +17,7 @@ properties:
   "#binding-cells":
     type: int
     required: true
-    const: 3
+    const: 1
 
   bindings:
     type: phandle-array
