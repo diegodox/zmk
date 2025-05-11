@@ -40,7 +40,7 @@ struct behavior_hold_tap_mod_data {
 static int invoke_press(const struct device *dev, uint32_t param,
                         struct zmk_behavior_binding_event ev) {
     struct zmk_behavior_binding b = {
-        .behavior_dev = dev,
+        .behavior_dev = dev->name, // must be the device's name string
         .param1 = param,
     };
     return zmk_behavior_invoke_binding(&b, ev, true);
@@ -49,15 +49,17 @@ static int invoke_press(const struct device *dev, uint32_t param,
 static int invoke_release(const struct device *dev, uint32_t param,
                           struct zmk_behavior_binding_event ev) {
     struct zmk_behavior_binding b = {
-        .behavior_dev = dev,
+        .behavior_dev = dev->name,
         .param1 = param,
     };
     return zmk_behavior_invoke_binding(&b, ev, false);
 }
 
 static void timer_handler(struct k_work *work) {
+    /* pull out our k_work_delayable, then container_of() back to our data struct */
+    struct k_work_delayable *dwork = k_work_delayable_from_work(work);
     struct behavior_hold_tap_mod_data *d =
-        CONTAINER_OF(work, struct behavior_hold_tap_mod_data, work);
+        CONTAINER_OF(dwork, struct behavior_hold_tap_mod_data, work);
     auto *a = &d->active;
 
     if (a->mod_active) {
@@ -80,8 +82,7 @@ static int on_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_
     struct behavior_hold_tap_mod_data *d = inst->data;
     const struct behavior_hold_tap_mod_config *cfg = inst->config;
 
-    uint32_t explicit_mods = zmk_hid_get_explicit_mods();
-    bool mod_active = (explicit_mods & cfg->mods) != 0;
+    bool mod_active = (zmk_hid_get_explicit_mods() & cfg->mods) != 0;
 
     d->active = (typeof(d->active)){
         .position = ev.position,
@@ -116,11 +117,9 @@ static int on_released(struct zmk_behavior_binding *binding, struct zmk_behavior
     if (a->mod_active) {
         return invoke_release(cfg->mod_dev, a->param_mod, ev);
     }
-
     if (a->hold_sent) {
         return invoke_release(cfg->hold_dev, a->param_hold, ev);
     }
-
     return invoke_release(cfg->tap_dev, a->param_tap, ev);
 }
 
