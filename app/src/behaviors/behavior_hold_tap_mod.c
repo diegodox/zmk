@@ -30,8 +30,9 @@ struct behavior_hold_tap_mod_config {
 
 // --- Hold Timer Handler ---
 static void tapping_term_handler(struct k_work *work) {
+    struct k_work_delayable *dwork = k_work_delayable_from_work(work);
     struct behavior_hold_tap_mod_data *data =
-        CONTAINER_OF(work, struct behavior_hold_tap_mod_data, work);
+        CONTAINER_OF(dwork, struct behavior_hold_tap_mod_data, work);
 
     if (data->released || data->mod_active) {
         return;
