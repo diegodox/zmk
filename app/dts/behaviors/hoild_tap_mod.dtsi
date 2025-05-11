@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2025
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <dt-bindings/zmk/keys.h>
+
+/ {
+    behaviors {
+        /omit-if-no-ref/ esc_caps_mod: esc_caps_mod {
+            compatible = "zmk,behavior-hold-tap-mod";
+            #binding-cells = <0>;
+            bindings = <&kp ESC &kp CAPS_LOCK &kp GRAVE>;
+            mods = <MOD_LSFT>;
+            tapping-term-ms = <200>;
+        };
+
+        /omit-if-no-ref/ enter_ctrl_mod: enter_ctrl_mod {
+            compatible = "zmk,behavior-hold-tap-mod";
+            #binding-cells = <0>;
+            bindings = <&kp ENTER &kp LCTRL &kp TAB>;
+            mods = <MOD_LALT>;
+            tapping-term-ms = <200>;
+        };
+
+        /omit-if-no-ref/ space_nav_mod: space_nav_mod {
+            compatible = "zmk,behavior-hold-tap-mod";
+            #binding-cells = <0>;
+            bindings = <&kp SPACE &mo 1 &kp TAB>;
+            mods = <MOD_LGUI>;
+            tapping-term-ms = <180>;
+        };
+    };
+};
