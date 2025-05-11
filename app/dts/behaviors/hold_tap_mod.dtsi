@@ -18,7 +18,7 @@
 #endif
         htm: htm {
             compatible = "zmk,behavior-hold-tap-mod";
-            #binding-cells = <0>;
+            #binding-cells = <3>;
             bindings = <&kp A &kp B &kp C>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
             tapping-term-ms = <200>;
