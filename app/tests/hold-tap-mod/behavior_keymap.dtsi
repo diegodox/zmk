@@ -1,0 +1,22 @@
+/ {
+    behaviors {
+        htm: htm {
+            compatible = "zmk,behavior-hold-tap-mod";
+            #binding-cells = <0>;
+            bindings = <&kp A &kp B &kp C>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+            tapping-term-ms = <200>;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        default_layer {
+            bindings = <
+                &kp LEFT_ALT &htm
+                &kp LEFT_SHIFT &kp RIGHT_SHIFT
+            >;
+        };
+    };
+};
