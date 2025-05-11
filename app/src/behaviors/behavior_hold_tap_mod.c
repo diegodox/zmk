@@ -111,9 +111,9 @@ static int behavior_hold_tap_mod_init(const struct device *dev) {
 
 #define HTM_INST(n)                                                                                \
     static const struct behavior_hold_tap_mod_config behavior_hold_tap_mod_config_##n = {          \
-        .tap_dev = DEVICE_DT_INST_PHANDLE_BY_IDX(n, bindings, 0),                                  \
-        .hold_dev = DEVICE_DT_INST_PHANDLE_BY_IDX(n, bindings, 1),                                 \
-        .mod_dev = DEVICE_DT_INST_PHANDLE_BY_IDX(n, bindings, 2),                                  \
+        .tap_dev = DEVICE_DT_GET(DT_INST_PHANDLE_BY_IDX(n, bindings, 0)),                          \
+        .hold_dev = DEVICE_DT_GET(DT_INST_PHANDLE_BY_IDX(n, bindings, 1)),                         \
+        .mod_dev = DEVICE_DT_GET(DT_INST_PHANDLE_BY_IDX(n, bindings, 2)),                          \
         .tap_param = DT_INST_PHA_BY_IDX(n, bindings, 0, param1),                                   \
         .hold_param = DT_INST_PHA_BY_IDX(n, bindings, 1, param1),                                  \
         .mod_param = DT_INST_PHA_BY_IDX(n, bindings, 2, param1),                                   \
@@ -123,7 +123,7 @@ static int behavior_hold_tap_mod_init(const struct device *dev) {
     static struct behavior_hold_tap_mod_data behavior_hold_tap_mod_data_##n;                       \
     BEHAVIOR_DT_INST_DEFINE(n, behavior_hold_tap_mod_init, NULL, &behavior_hold_tap_mod_data_##n,  \
                             &behavior_hold_tap_mod_config_##n, POST_KERNEL,                        \
-                            CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &behavior_hold_tap_mod_api)
+                            CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &behavior_hold_tap_mod_api);
 
 DT_INST_FOREACH_STATUS_OKAY(HTM_INST)
 
