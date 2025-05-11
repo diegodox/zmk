@@ -11,18 +11,17 @@
 #include <zmk/event_manager.h>
 #include <zmk/events/position_state_changed.h>
 #include <zmk/events/keycode_state_changed.h>
-#include <zmk/behavior.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
 
 struct behavior_hold_tap_mod_config {
-    int tapping_term_ms;
-    char *hold_behavior_dev;
     char *tap_behavior_dev;
+    char *hold_behavior_dev;
     char *mod_behavior_dev;
     uint32_t mods;
+    int tapping_term_ms;
 };
 
 struct behavior_hold_tap_mod_data {};
@@ -130,11 +129,11 @@ static int behavior_hold_tap_mod_init(const struct device *dev) {
 
 #define KP_INST(n)                                                                                 \
     static const struct behavior_hold_tap_mod_config behavior_hold_tap_mod_config_##n = {          \
-        .tapping_term_ms = DT_INST_PROP(n, tapping_term_ms),                                       \
-        .hold_behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(n, bindings, 0)),               \
-        .tap_behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(n, bindings, 1)),                \
+        .tap_behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(n, bindings, 0)),                \
+        .hold_behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(n, bindings, 1)),               \
         .mod_behavior_dev = DEVICE_DT_NAME(DT_INST_PHANDLE_BY_IDX(n, bindings, 2)),                \
         .mods = DT_INST_PROP(n, mods),                                                             \
+        .tapping_term_ms = DT_INST_PROP(n, tapping_term_ms),                                       \
     };                                                                                             \
     static struct behavior_hold_tap_mod_data behavior_hold_tap_mod_data_##n = {};                  \
     BEHAVIOR_DT_INST_DEFINE(n, behavior_hold_tap_mod_init, NULL, &behavior_hold_tap_mod_data_##n,  \
