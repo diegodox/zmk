@@ -40,7 +40,7 @@ struct behavior_hold_tap_mod_data {
 static int invoke_press(const struct device *dev, uint32_t param,
                         struct zmk_behavior_binding_event ev) {
     struct zmk_behavior_binding b = {
-        .behavior_dev = dev->name, // must be the device's name string
+        .behavior_dev = dev->name,
         .param1 = param,
     };
     return zmk_behavior_invoke_binding(&b, ev, true);
@@ -56,23 +56,21 @@ static int invoke_release(const struct device *dev, uint32_t param,
 }
 
 static void timer_handler(struct k_work *work) {
-    /* pull out our k_work_delayable, then container_of() back to our data struct */
     struct k_work_delayable *dwork = k_work_delayable_from_work(work);
     struct behavior_hold_tap_mod_data *d =
         CONTAINER_OF(dwork, struct behavior_hold_tap_mod_data, work);
-    auto *a = &d->active;
 
-    if (a->mod_active) {
+    if (d->active.mod_active) {
         return;
     }
 
-    a->hold_sent = true;
-    invoke_press(a->cfg->hold_dev, a->param_hold,
+    d->active.hold_sent = true;
+    invoke_press(d->active.cfg->hold_dev, d->active.param_hold,
                  (struct zmk_behavior_binding_event){
-                     .position = a->position,
-                     .timestamp = a->timestamp,
+                     .position = d->active.position,
+                     .timestamp = d->active.timestamp,
 #if IS_ENABLED(CONFIG_ZMK_SPLIT)
-                     .source = a->source,
+                     .source = d->active.source,
 #endif
                  });
 }
@@ -84,19 +82,17 @@ static int on_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_
 
     bool mod_active = (zmk_hid_get_explicit_mods() & cfg->mods) != 0;
 
-    d->active = (typeof(d->active)){
-        .position = ev.position,
+    d->active.position = ev.position;
 #if IS_ENABLED(CONFIG_ZMK_SPLIT)
-        .source = ev.source,
+    d->active.source = ev.source;
 #endif
-        .timestamp = ev.timestamp,
-        .param_hold = binding->param1,
-        .param_tap = binding->param2,
-        .param_mod = binding->param3,
-        .cfg = cfg,
-        .mod_active = mod_active,
-        .hold_sent = false,
-    };
+    d->active.timestamp = ev.timestamp;
+    d->active.param_hold = binding->param1;
+    d->active.param_tap = binding->param2;
+    d->active.param_mod = binding->param3;
+    d->active.cfg = cfg;
+    d->active.mod_active = mod_active;
+    d->active.hold_sent = false;
 
     if (mod_active) {
         return invoke_press(cfg->mod_dev, d->active.param_mod, ev);
@@ -109,18 +105,17 @@ static int on_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_
 static int on_released(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event ev) {
     const struct device *inst = zmk_behavior_get_binding(binding->behavior_dev);
     struct behavior_hold_tap_mod_data *d = inst->data;
-    auto *a = &d->active;
-    const struct behavior_hold_tap_mod_config *cfg = a->cfg;
+    const struct behavior_hold_tap_mod_config *cfg = d->active.cfg;
 
     k_work_cancel_delayable(&d->work);
 
-    if (a->mod_active) {
-        return invoke_release(cfg->mod_dev, a->param_mod, ev);
+    if (d->active.mod_active) {
+        return invoke_release(cfg->mod_dev, d->active.param_mod, ev);
     }
-    if (a->hold_sent) {
-        return invoke_release(cfg->hold_dev, a->param_hold, ev);
+    if (d->active.hold_sent) {
+        return invoke_release(cfg->hold_dev, d->active.param_hold, ev);
     }
-    return invoke_release(cfg->tap_dev, a->param_tap, ev);
+    return invoke_release(cfg->tap_dev, d->active.param_tap, ev);
 }
 
 static const struct behavior_driver_api behavior_hold_tap_mod_api = {
