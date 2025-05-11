@@ -18,9 +18,9 @@
 #endif
         htm: htm {
             compatible = "zmk,behavior-hold-tap-mod";
-            #binding-cells = <4>;
-            bindings = <&kp 0 &kp 0 &kp 0>; // dummy、param1〜3に上書きされる
-            mods = <0>;  // param4 で上書き
+            #binding-cells = <0>;
+            bindings = <&kp A &kp B &kp C>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
             tapping-term-ms = <200>;
         };
     };
