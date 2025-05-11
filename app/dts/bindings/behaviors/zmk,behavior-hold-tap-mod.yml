@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025
+
+description: Hold-Tap with Mod Morphing Behavior
+
+compatible: "zmk,behavior-hold-tap-mod"
+
+include: zero_param.yaml
+
+properties:
+  bindings:
+    type: phandle-array
+    required: true
+    description: |
+      Three behaviors:
+      - bindings[0]: tap_behavior (called on quick release without mods)
+      - bindings[1]: hold_behavior (called on long press without mods)
+      - bindings[2]: mod_behavior  (called when specified mods are active, overrides tap/hold)
+
+  mods:
+    type: int
+    required: true
+    description: |
+      Modifier bitmask that activates mod_behavior if any of the bits are set.
+      Example: <MOD_LSFT> or <MOD_LSFT | MOD_LCTL>
+
+  tapping-term-ms:
+    type: int
+    required: true
+    description: Tapping term in milliseconds. Used to distinguish tap from hold.
