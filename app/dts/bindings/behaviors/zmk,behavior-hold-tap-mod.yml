@@ -1,30 +1,42 @@
+# Copyright (c) 2025 The ZMK Contributors
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2025
 
-description: Hold-Tap with Mod Morphing Behavior
-
+description: |
+  A combined hold/tap behavior that also has a “mod” action
+  whenever a specified modifier is held.
 compatible: "zmk,behavior-hold-tap-mod"
-
-include: zero_param.yaml
+include:
+  - behavior-metadata.yaml
 
 properties:
+  "#binding-cells":
+    type: int
+    required: true
+    const: 3
+
   bindings:
     type: phandle-array
     required: true
     description: |
-      Three behaviors:
-      - bindings[0]: tap_behavior (called on quick release without mods)
-      - bindings[1]: hold_behavior (called on long press without mods)
-      - bindings[2]: mod_behavior  (called when specified mods are active, overrides tap/hold)
+      A list of three behaviors, in this order:
+        • bindings[0]: tap behavior (quick press)
+        • bindings[1]: hold behavior (long press)
+        • bindings[2]: mod behavior  (when mods are active)
 
   mods:
     type: int
     required: true
     description: |
-      Modifier bitmask that activates mod_behavior if any of the bits are set.
-      Example: <MOD_LSFT> or <MOD_LSFT | MOD_LCTL>
+      Bitmask of modifiers that activate the “mod” behavior.
+      (e.g. <MOD_LSFT | MOD_LCTL>)
 
   tapping-term-ms:
     type: int
     required: true
-    description: Tapping term in milliseconds. Used to distinguish tap from hold.
+    description: |
+      Duration in milliseconds to distinguish a tap from a hold.
+
+binding-cells:
+  - param1
+  - param2
+  - param3
