@@ -28,13 +28,12 @@ struct behavior_hold_tap_mod_data {
     bool released;
 };
 
-bool mod_active;
 static void tapping_term_handler(struct k_work *work) {
     struct k_work_delayable *dwork = k_work_delayable_from_work(work);
     struct behavior_hold_tap_mod_data *data =
         CONTAINER_OF(dwork, struct behavior_hold_tap_mod_data, work);
 
-    if (data->released || data->mod_active) {
+    if (data->released) {
         return;
     }
 
@@ -61,7 +60,6 @@ static int behavior_hold_tap_mod_press(const struct device *dev,
 
     data->event = event;
     data->binding = *binding;
-    data->mod_active = mod_active;
     data->released = false;
 
     const struct device *behavior = mod_active ? cfg->bindings[2] : cfg->bindings[0];
